@@ -1,0 +1,80 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2022" /* Set the JavaScript language version for emitted JavaScript */,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ] /* Specify a set of bundled library declaration files */,
+    "jsx": "react-jsx" /* Specify what JSX code is generated */,
+
+    /* Modules */
+    "module": "ESNext" /* Specify what module code is generated */,
+    "moduleResolution": "bundler" /* Specify how TypeScript looks up a file from a given module specifier */,
+    "baseUrl": "." /* Specify the base directory to resolve non-relative module names */,
+    "paths": {
+      "@/*": ["src/*"],
+      "@fuse/*": ["src/@fuse/*"],
+      "@history": ["src/@history"],
+      "@lodash": ["src/@lodash"],
+      "src/*": ["src/*"],
+      "app/*": ["src/app/*"],
+      "api": ["src/app/services/api"],
+      "tokenStorage": ["src/app/services/tokenStorage"],
+      "recaptcha": ["src/app/auth/services/recaptcha"],
+      "@spark/*": ["src/@fuse/*"],
+    },
+    "resolveJsonModule": true /* Enable importing .json files */,
+    "allowImportingTsExtensions": false /* Allow imports to include TypeScript file extensions */,
+    "ignoreDeprecations": "6.0" /* Ignore deprecation warnings for TypeScript 6.x */,
+
+    /* JavaScript Support */
+    "allowJs": true /* Allow JavaScript files to be a part of your program */,
+    "checkJs": false /* Enable error reporting in type-checked JavaScript files */,
+
+    /* Emit */
+    "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files */,
+    "declarationMap": true /* Create sourcemaps for d.ts files */,
+    "sourceMap": true /* Create source map files for emitted JavaScript files */,
+    "outDir": "./build" /* Specify an output folder for all emitted files */,
+    "removeComments": true /* Disable emitting comments */,
+    "noEmit": true /* Disable emitting files from a compilation - Webpack handles this */,
+
+    /* Interop Constraints */
+    "isolatedModules": true /* Ensure that each file can be safely transpiled */,
+    "allowSyntheticDefaultImports": true /* Allow 'import x from y' when a module doesn't have a default export */,
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports */,
+
+    /* Type Checking */
+    "strict": true /* Enable all strict type-checking options */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type */,
+    "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined' */,
+    "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible */,
+    "strictBindCallApply": true /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function */,
+    "strictPropertyInitialization": true /* Check for class properties that are declared but not set in the constructor */,
+    "noImplicitThis": true /* Enable error reporting when 'this' is given the type 'any' */,
+    "alwaysStrict": true /* Ensure 'use strict' is always emitted */,
+    "noUnusedLocals": true /* Enable error reporting when local variables aren't read */,
+    "noUnusedParameters": true /* Raise an error when a function parameter isn't read */,
+    "noImplicitReturns": true /* Enable error reporting for codepaths that do not explicitly return in a function */,
+    "noFallthroughCasesInSwitch": true /* Enable error reporting for fallthrough cases in switch statements */,
+    "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index */,
+    "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier */,
+    "noPropertyAccessFromIndexSignature": false /* Enforces using indexed accessors for keys declared using an indexed type */,
+
+    /* Completeness */
+    "skipLibCheck": true /* Skip type checking all .d.ts files */
+  },
+  "include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts", "webpack/**/*.ts", "webpack/**/*.js"],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
+  ]
+}

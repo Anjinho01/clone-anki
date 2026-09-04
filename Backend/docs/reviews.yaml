@@ -1,0 +1,142 @@
+paths:
+  /reviews/study/{deckId}:
+    get:
+      tags: [Reviews]
+      summary: Buscar cards para sessão de estudo
+      description: |
+        Retorna cards novos + vencidos respeitando os limites diários do deck.
+        O FSRS determina a ordem de prioridade.
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+      responses:
+        '200':
+          description: Cards para estudar
+
+  /reviews/preview/{cardId}:
+    get:
+      tags: [Reviews]
+      summary: Preview dos intervalos FSRS para um card
+      description: |
+        Aceita tanto o `progressId` legado quanto o `deckCardId` estável.
+        Se o card ainda não tiver progresso iniciado, o preview é calculado a partir do estado inicial.
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Preview de intervalos por rating
+
+  /reviews:
+    post:
+      tags: [Reviews]
+      summary: Submeter avaliação de um card (FSRS)
+      description: |
+        Envia o rating do card. O servidor aplica o FSRS e retorna o novo estado
+        com a data da próxima revisão agendada.
+        O `cardId` aceita tanto o `progressId` legado quanto o `deckCardId` estável.
+        Quando necessário, o progresso do usuário é materializado sob demanda antes do review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cardId, rating]
+              properties:
+                cardId:
+                  type: integer
+                  description: Identificador do progresso ou da associação deck-card
+                rating:
+                  type: integer
+                  enum: [1, 2, 3, 4]
+                  description: "1=Again, 2=Hard, 3=Good, 4=Easy"
+                durationMs:
+                  type: integer
+                  description: Tempo em ms que o usuário levou para responder
+      responses:
+        '200':
+          description: Review processado com novo agendamento FSRS
+
+  /reviews/stats:
+    get:
+      tags: [Reviews]
+      summary: Estatísticas de estudo
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 365
+      responses:
+        '200':
+          description: Estatísticas do período
+
+  /reviews/undo:
+    post:
+      tags: [Reviews]
+      summary: Desfazer o ultimo review de um card
+      description: |
+        Aceita `progressId` legado ou `deckCardId` estável.
+        Se o card ainda não tiver histórico de review, a operação falha.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cardId]
+              properties:
+                cardId:
+                  type: integer
+                  description: Identificador do progresso ou da associação deck-card
+      responses:
+        '200':
+          description: Review desfeito
+
+  /reviews/history/{cardId}:
+    get:
+      tags: [Reviews]
+      summary: Histórico de reviews de um card
+      description: |
+        Aceita `progressId` legado ou `deckCardId` estável.
+        Cards ainda não estudados retornam histórico vazio.
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de reviews do card
+
+components:
+  schemas:
+    ReviewResult:
+      type: object
+      properties:
+        card:
+          type: object
+          description: Card com estado FSRS atualizado
+        nextReview:
+          type: string
+          format: date-time
+          description: Data da próxima revisão
+        scheduledDays:
+          type: integer
+          description: Dias até a próxima revisão

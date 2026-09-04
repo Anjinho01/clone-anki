@@ -1,0 +1,65 @@
+/* classe aplicada pelo react-modal via bodyOpenClassName */
+.dialog-open {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* iOS/Safari: trava o body de verdade quando o modal abre */
+@supports (-webkit-touch-callout: none) {
+  .dialog-open {
+    position: fixed;
+    width: 100%;
+  }
+}
+
+@layer components {
+  .dialog {
+    outline: none;
+    @apply mx-auto;
+  }
+
+  @screen sm { .dialog { @apply max-w-xl; } }
+  @screen md { .dialog { @apply max-w-2xl; } }
+  @screen lg { .dialog { @apply max-w-4xl; } }
+  @screen xl { .dialog { @apply max-w-6xl; } }
+
+  /* Caixa interna do dialog */
+  .dialog-content {
+    /* removi h-full para o max-height/altura virem do caller quando necessário */
+    @apply p-6 rounded-2xl shadow-xl mx-4 my-8 sm:mx-0 sm:my-16 relative bg-white dark:bg-gray-800;
+
+    /* impede o scroll "vazar" pro body */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    display: flex;           /* ajuda em layouts com footer sticky */
+    flex-direction: column;  /* conteúdo + footer em coluna */
+  }
+
+  /* Overlay ocupa a tela toda e centraliza no desktop */
+  .dialog-overlay {
+    transition: all 0.15s ease-in-out;
+    @apply fixed inset-0 z-30 bg-black/60 dark:bg-black/80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* bloqueia chaining pro body quando chega no fim do scroll */
+    overscroll-behavior: contain;
+  }
+
+  .dialog-overlay-after-open { opacity: 1; }
+  .dialog-overlay-before-close { opacity: 0; }
+
+  /* Mobile: o overlay estica para permitir full-screen real */
+  @media (max-width: 768px) {
+    .dialog-overlay { align-items: stretch; }
+
+    /* Mobile full-screen (casa com w-screen/h-[100dvh] que você passa no contentClassName) */
+    .dialog-content {
+      border-radius: 0;   /* cantos retos */
+      margin: 0;          /* sem margens */
+      width: 100vw;       /* garante largura total, caso esqueça no caller */
+      height: 100dvh;     /* altura total segura em iOS/Android modernos */
+    }
+  }
+}

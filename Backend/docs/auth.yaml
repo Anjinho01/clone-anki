@@ -1,0 +1,144 @@
+paths:
+  /auth/signin:
+    post:
+      tags: [Auth]
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                rememberMe:
+                  type: boolean
+                  default: false
+                recaptchaToken:
+                  type: string
+                  description: Token opcional do reCAPTCHA v3 para login.
+                recaptchaV2Token:
+                  type: string
+                  description: Token opcional do reCAPTCHA v2 quando o challenge visual for exigido.
+      responses:
+        '200':
+          description: Login bem-sucedido (access token no body, refresh token no cookie)
+        '449':
+          description: Challenge adicional de reCAPTCHA v2 exigido
+        '401':
+          description: Credenciais inválidas
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Renovar access token
+      security: []
+      description: Usa o refresh token do cookie httpOnly
+      responses:
+        '200':
+          description: Novo access token
+        '401':
+          description: Refresh token inválido
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout
+      security: []
+      responses:
+        '200':
+          description: Logout realizado
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Perfil do usuário autenticado
+      responses:
+        '200':
+          description: Dados do perfil
+
+  /auth/change-password:
+    put:
+      tags: [Auth]
+      summary: Alterar a senha do usuario autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Senha alterada
+        '400':
+          description: Payload inválido
+
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Solicitar código de recuperação de senha
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                recaptchaToken:
+                  type: string
+                  description: Token opcional do reCAPTCHA v3.
+                recaptchaV2Token:
+                  type: string
+                  description: Token opcional do reCAPTCHA v2 quando o challenge visual for exigido.
+      responses:
+        '200':
+          description: Código enviado (se email existir)
+        '449':
+          description: Challenge adicional de reCAPTCHA v2 exigido
+
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Redefinir senha com código OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code, newPassword]
+              properties:
+                email:
+                  type: string
+                  format: email
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Senha redefinida
+        '400':
+          description: Código inválido ou expirado

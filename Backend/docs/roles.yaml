@@ -1,0 +1,22 @@
+paths:
+  /roles:
+    get:
+      tags: [Roles]
+      summary: Listar roles do sistema
+      responses:
+        '200':
+          description: Roles retornadas
+
+  /roles/{id}:
+    get:
+      tags: [Roles]
+      summary: Buscar role por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role retornada

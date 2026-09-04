@@ -1,0 +1,51 @@
+paths:
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Listar notificacoes do usuario autenticado
+      parameters:
+        - in: query
+          name: onlyUnread
+          schema:
+            type: boolean
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de notificacoes
+
+  /notifications/unread-count:
+    get:
+      tags: [Notifications]
+      summary: Quantidade de notificacoes nao lidas
+      responses:
+        '200':
+          description: Contagem retornada
+
+  /notifications/{id}/read:
+    post:
+      tags: [Notifications]
+      summary: Marcar notificacao como lida
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Notificacao marcada como lida
+
+  /notifications/read-all:
+    post:
+      tags: [Notifications]
+      summary: Marcar todas as notificacoes como lidas
+      responses:
+        '200':
+          description: Notificacoes marcadas como lidas

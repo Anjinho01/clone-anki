@@ -1,0 +1,142 @@
+paths:
+  /decks:
+    get:
+      tags: [Decks]
+      summary: Listar todos os decks do usuário
+      description: |
+        Regras de visibilidade no backend:
+        - `develop` e `admin` recebem todos os decks.
+        - `monitor` e `user` recebem todos os decks `general` e apenas os decks `private` cujo `ownerUserId` e o proprio usuario autenticado.
+      responses:
+        '200':
+          description: Lista de decks com contagem de cards
+
+    post:
+      tags: [Decks]
+      summary: Criar novo deck
+      description: |
+        Regras de criacao:
+        - `monitor`, `admin` e `develop` podem criar decks `general` ou `private`.
+        - `user` pode criar apenas decks `private`.
+        - Se `user` enviar `type=general`, o backend forca `type=private`.
+        - Apenas `monitor`, `admin` e `develop` podem informar `packageId`.
+        - O `type` do deck precisa combinar com o `type` do package informado.
+        - Limites de negocio: maximo de 150 decks privados por usuario e 100 decks publicos no sistema.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 1000
+                type:
+                  type: string
+                  enum: [general, private]
+                packageId:
+                  type: integer
+                  nullable: true
+                newCardsPerDay:
+                  type: integer
+                  default: 20
+                reviewCardsPerDay:
+                  type: integer
+                  default: 100
+                desiredRetention:
+                  type: number
+                  default: 0.9
+                  minimum: 0.5
+                  maximum: 0.99
+      responses:
+        '201':
+          description: Deck criado
+        '403':
+          description: Role sem permissao para criar deck publico ou vincular package
+        '409':
+          description: Limite de decks privados ou publicos atingido
+
+  /decks/{key}:
+    get:
+      tags: [Decks]
+      summary: Buscar deck por ID numérico ou UUID
+      description: |
+        Regras de leitura:
+        - `develop` e `admin` podem buscar qualquer deck.
+        - `monitor` e `user` podem buscar decks `general` e os proprios decks `private`.
+        - Deck privado de outro usuario responde como nao encontrado.
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dados do deck
+        '404':
+          description: Deck não encontrado
+
+    put:
+      tags: [Decks]
+      summary: Atualizar deck
+      description: |
+        Regras de edicao:
+        - Deck `general`: pode ser editado por `monitor`, `admin` e `develop`.
+        - Deck `private`: pode ser editado apenas pelo proprio dono.
+        - `user` nao pode alterar `packageId`.
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                packageId:
+                  type: integer
+                  nullable: true
+                newCardsPerDay:
+                  type: integer
+                reviewCardsPerDay:
+                  type: integer
+                desiredRetention:
+                  type: number
+      responses:
+        '200':
+          description: Deck atualizado
+        '403':
+          description: Sem permissao para editar o deck ou vincular package
+
+    delete:
+      tags: [Decks]
+      summary: Excluir deck (soft delete)
+      description: |
+        Regras de exclusao:
+        - Deck `general`: pode ser excluido por `monitor`, `admin` e `develop`.
+        - Deck `private`: pode ser excluido apenas pelo proprio dono.
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deck excluído
+        '403':
+          description: Sem permissao para excluir o deck

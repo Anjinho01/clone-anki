@@ -1,0 +1,207 @@
+paths:
+  /library-cards:
+    get:
+      tags: [Library Cards]
+      summary: Listar cards reutilizaveis da biblioteca
+      description: |
+        Regras de visibilidade:
+        - `develop` e `admin` recebem todos os cards reutilizaveis.
+        - `monitor` e `user` recebem todos os cards `general` e apenas os cards `private` cujo `ownerUserId` e o proprio usuario autenticado.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista paginada com limites de cards privados
+
+    post:
+      tags: [Library Cards]
+      summary: Criar card reutilizavel
+      description: |
+        Regras de criacao:
+        - `monitor`, `admin` e `develop` podem criar cards `general` ou `private`.
+        - `user` pode criar apenas cards `private`.
+        - Se `user` enviar `type=general`, o backend forca `type=private`.
+        - Existe limite de 2000 cards privados por usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [front, back]
+              properties:
+                front:
+                  type: string
+                back:
+                  type: string
+                type:
+                  type: string
+                  enum: [general, private]
+                ownerUserId:
+                  type: integer
+                  nullable: true
+                cardType:
+                  type: string
+                  enum: [basic, reverse, reversed, cloze, mcq]
+                mcqOptions:
+                  type: array
+                  items:
+                    type: string
+                mcqCorrect:
+                  type: integer
+      responses:
+        '201':
+          description: Card reutilizavel criado
+        '403':
+          description: Role sem permissao para manter card publico
+        '409':
+          description: Limite de cards privados atingido
+
+  /library-cards/{key}:
+    get:
+      tags: [Library Cards]
+      summary: Buscar card reutilizavel por ID ou UUID
+      description: |
+        Regras de leitura:
+        - `develop` e `admin` podem buscar qualquer card reutilizavel.
+        - `monitor` e `user` podem buscar cards `general` e os proprios cards `private`.
+        - Card privado de outro usuario responde como nao encontrado.
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Card encontrado
+
+  /library-cards/{id}:
+    put:
+      tags: [Library Cards]
+      summary: Atualizar card reutilizavel
+      description: |
+        Regras de edicao:
+        - Card `general`: pode ser editado por `monitor`, `admin` e `develop`.
+        - Card `private`: pode ser editado apenas pelo proprio dono.
+        - `user` nao pode transformar card privado em `general`.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                front:
+                  type: string
+                back:
+                  type: string
+                type:
+                  type: string
+                  enum: [general, private]
+                ownerUserId:
+                  type: integer
+                  nullable: true
+                cardType:
+                  type: string
+                  enum: [basic, reverse, reversed, cloze, mcq]
+                mcqOptions:
+                  type: array
+                  items:
+                    type: string
+                mcqCorrect:
+                  type: integer
+      responses:
+        '200':
+          description: Card atualizado
+        '403':
+          description: Sem permissao para editar este card reutilizavel
+        '409':
+          description: Limite de cards privados atingido ao mover para ownership privada
+
+    delete:
+      tags: [Library Cards]
+      summary: Excluir card reutilizavel
+      description: |
+        Regras de exclusao:
+        - Card `general`: pode ser excluido por `monitor`, `admin` e `develop`.
+        - Card `private`: pode ser excluido apenas pelo proprio dono.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Card excluido
+        '403':
+          description: Sem permissao para excluir este card reutilizavel
+
+  /library-cards/{id}/decks/{deckId}:
+    post:
+      tags: [Library Cards]
+      summary: Adicionar card reutilizavel a um deck
+      description: |
+        Regras de composicao de deck:
+        - Deck `general` pode receber apenas card `general`.
+        - Deck `general` pode ser gerenciado por `monitor`, `admin` e `develop`.
+        - Deck `private` pode ser gerenciado apenas pelo proprio dono.
+        - Card `private` so pode ser usado em deck `private` do mesmo dono.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Card adicionado ao deck
+        '403':
+          description: Sem permissao para adicionar o card ao deck ou combinacao deck/card invalida
+
+    delete:
+      tags: [Library Cards]
+      summary: Remover card reutilizavel de um deck
+      description: |
+        Regras de remocao:
+        - Deck `general` pode ser gerenciado por `monitor`, `admin` e `develop`.
+        - Deck `private` pode ser gerenciado apenas pelo proprio dono.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Card removido do deck
+        '403':
+          description: Sem permissao para remover o card deste deck

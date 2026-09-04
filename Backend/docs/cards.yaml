@@ -1,0 +1,302 @@
+paths:
+  /cards/deck/{deckId}:
+    get:
+      tags: [Cards]
+      summary: Listar cards do usuario em um deck
+      description: |
+        Retorna os cards do deck usando `deckCardId` estavel como `id`.
+        O campo `progressId` so existe quando o progresso do usuario ja foi materializado.
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de cards
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, data]
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Card'
+
+  /cards/{id}:
+    get:
+      tags: [Cards]
+      summary: Buscar card do usuario por progressId
+      description: |
+        O `id` desta rota representa o `progressId` do usuario.
+        A resposta continua expondo `deckCardId` estavel no campo `data.id`.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Identificador de `tb_card_progress`
+      responses:
+        '200':
+          description: Dados do card
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, data]
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Card'
+
+  /cards/{id}/suspend:
+    patch:
+      tags: [Cards]
+      summary: Suspender card
+      description: |
+        O `id` desta rota representa o `progressId` do usuario.
+        A resposta devolve tambem o `deckCardId` correspondente para reconciliacao de estado no frontend.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Identificador de `tb_card_progress`
+      responses:
+        '200':
+          description: Card suspenso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardMutationResponse'
+
+  /cards/{id}/unsuspend:
+    patch:
+      tags: [Cards]
+      summary: Reativar card suspenso
+      description: |
+        O `id` desta rota representa o `progressId` do usuario.
+        A resposta devolve tambem o `deckCardId` correspondente para reconciliacao de estado no frontend.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Identificador de `tb_card_progress`
+      responses:
+        '200':
+          description: Card reativado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardMutationResponse'
+
+  /cards/{id}/bury:
+    patch:
+      tags: [Cards]
+      summary: Enterrar card manualmente
+      description: |
+        O `id` desta rota representa o `progressId` do usuario.
+        A resposta devolve tambem o `deckCardId` correspondente para reconciliacao de estado no frontend.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Identificador de `tb_card_progress`
+      responses:
+        '200':
+          description: Card enterrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardMutationResponse'
+
+  /cards/deck/{deckId}/unbury-expired:
+    post:
+      tags: [Cards]
+      summary: Desenterrar automaticamente cards expirados do deck
+      parameters:
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cards expirados desenterrados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, data]
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    required: [count]
+                    properties:
+                      count:
+                        type: integer
+                        example: 3
+
+components:
+  schemas:
+    Card:
+      type: object
+      required:
+        - id
+        - progressId
+        - deckId
+        - cardId
+        - flashcardId
+        - userId
+        - front
+        - back
+        - cardType
+        - mcqOptions
+        - mcqCorrect
+        - state
+        - difficulty
+        - stability
+        - retrievability
+        - elapsedDays
+        - scheduledDays
+        - reps
+        - lapses
+        - due
+        - lastReview
+        - isSuspended
+        - isBuried
+        - isDeleted
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          description: Identificador estavel de `tb_deck_cards`
+          example: 55
+        progressId:
+          type: integer
+          nullable: true
+          description: Identificador de `tb_card_progress` quando o progresso ja existe
+          example: 900
+        deckId:
+          type: integer
+          example: 12
+        cardId:
+          type: integer
+          example: 77
+        flashcardId:
+          type: integer
+          example: 77
+        userId:
+          type: integer
+          nullable: true
+          example: 3
+        front:
+          type: string
+          example: O que e FSRS?
+        back:
+          type: string
+          example: Um algoritmo de repeticao espacada.
+        cardType:
+          type: string
+          enum: [basic, reversed, cloze, mcq]
+          example: basic
+        mcqOptions:
+          type: array
+          nullable: true
+          items:
+            type: string
+          example: [Opcao A, Opcao B, Opcao C]
+        mcqCorrect:
+          type: integer
+          nullable: true
+          example: 1
+        difficulty:
+          type: number
+          example: 5.3
+        stability:
+          type: number
+          example: 12.4
+        retrievability:
+          type: number
+          example: 0.91
+        elapsedDays:
+          type: integer
+          example: 4
+        scheduledDays:
+          type: integer
+          example: 12
+        reps:
+          type: integer
+          example: 3
+        lapses:
+          type: integer
+          example: 0
+        state:
+          type: integer
+          example: 2
+        lastReview:
+          type: string
+          format: date-time
+          nullable: true
+        due:
+          type: string
+          format: date-time
+          nullable: true
+        isSuspended:
+          type: boolean
+          nullable: true
+          example: false
+        isBuried:
+          type: boolean
+          example: false
+        isDeleted:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CardMutationResult:
+      type: object
+      required: [progressId, deckCardId]
+      properties:
+        progressId:
+          type: integer
+          description: Identificador de `tb_card_progress` usado na mutacao
+          example: 900
+        deckCardId:
+          type: integer
+          description: Identificador estavel de `tb_deck_cards` retornado para reconciliacao local
+          example: 55
+    CardMutationResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Card suspenso
+        data:
+          $ref: '#/components/schemas/CardMutationResult'

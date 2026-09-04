@@ -1,0 +1,224 @@
+paths:
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Buscar perfil do usuario autenticado
+      responses:
+        '200':
+          description: Perfil retornado
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Alias de leitura do usuario autenticado
+      responses:
+        '200':
+          description: Dados do usuario autenticado
+
+    put:
+      tags: [Users]
+      summary: Atualizar dados basicos do usuario autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Usuario atualizado
+
+  /users/me/reset-password:
+    put:
+      tags: [Users]
+      summary: Redefinir senha do proprio usuario autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Senha redefinida
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Listar usuarios (admin)
+      description: Retorna `data` e `pagination`, sem wrapper `success`, por compatibilidade com o frontend atual.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [all, actived, deactivated]
+        - in: query
+          name: roles
+          schema:
+            type: string
+          description: Lista textual de roles para filtro.
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista paginada de usuarios
+
+    post:
+      tags: [Users]
+      summary: Criar usuario (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                role:
+                  type: string
+                  enum: [develop, admin, user]
+      responses:
+        '201':
+          description: Usuario criado
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Buscar usuario por ID (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+
+    put:
+      tags: [Users]
+      summary: Atualizar usuario (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                role:
+                  type: string
+                  enum: [develop, admin, user]
+                isActive:
+                  type: boolean
+                actived:
+                  description: Alias legado aceito pelo backend e normalizado para `isActive`.
+                  oneOf:
+                    - type: boolean
+                    - type: integer
+      responses:
+        '200':
+          description: Usuario atualizado
+
+  /users/{id}/reset-password:
+    put:
+      tags: [Users]
+      summary: Redefinir senha de usuario por ID (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newPassword]
+              properties:
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Senha redefinida
+
+  /users/{id}/toggle-active:
+    patch:
+      tags: [Users]
+      summary: Ativar ou desativar usuario (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [isActive]
+              properties:
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: Status atualizado

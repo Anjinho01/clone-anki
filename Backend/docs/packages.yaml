@@ -1,0 +1,114 @@
+paths:
+  /packages:
+    get:
+      tags: [Packages]
+      summary: Listar packages visiveis ao usuario autenticado
+      description: |
+        Todos os packages atuais sao publicos.
+        Qualquer usuario autenticado pode listar os packages disponiveis.
+      responses:
+        '200':
+          description: Lista de packages
+
+    post:
+      tags: [Packages]
+      summary: Criar um novo package
+      description: |
+        Regras de criacao:
+        - `monitor`, `admin` e `develop` podem criar packages.
+        - `user` nao pode criar package.
+        - O backend cria packages como `general` por regra de negocio.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 2000
+                position:
+                  type: integer
+                  minimum: 0
+      responses:
+        '201':
+          description: Package criado
+        '403':
+          description: Role sem permissao para criar package
+
+  /packages/{key}:
+    get:
+      tags: [Packages]
+      summary: Buscar package por ID numerico ou UUID
+      description: |
+        Qualquer usuario autenticado pode consultar um package existente.
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Package encontrado
+        '404':
+          description: Package não encontrado
+
+  /packages/{id}:
+    put:
+      tags: [Packages]
+      summary: Atualizar package
+      description: |
+        Regras de edicao:
+        - `admin` e `develop` podem editar qualquer package.
+        - `monitor` pode editar apenas packages criados por ele mesmo.
+        - `user` nao pode editar package.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                position:
+                  type: integer
+      responses:
+        '200':
+          description: Package atualizado
+        '403':
+          description: Sem permissao para editar este package
+
+    delete:
+      tags: [Packages]
+      summary: Excluir package
+      description: |
+        Regras de exclusao:
+        - `admin` e `develop` podem excluir qualquer package.
+        - `monitor` pode excluir apenas packages criados por ele mesmo.
+        - `user` nao pode excluir package.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Package excluido
+        '403':
+          description: Sem permissao para excluir este package

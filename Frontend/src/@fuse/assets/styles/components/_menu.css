@@ -1,0 +1,43 @@
+@layer components {
+  .menu-title {
+    @apply uppercase font-semibold px-3 mt-4 mb-2;
+
+    &.menu-title-light {
+      @apply text-gray-500;
+    }
+
+    &.menu-title-dark {
+      @apply text-gray-300;
+    }
+
+    &.menu-title-themed {
+      @apply text-gray-100/50;
+    }
+  }
+
+  .menu-light {
+    @apply bg-white;
+  }
+
+  .menu-dark {
+    @apply bg-gray-800;
+  }
+
+  .menu-transparent {
+    @apply bg-transparent;
+  }
+
+  .ecme-sidebar-nav {
+    .menu {
+      @apply bg-transparent px-0 pb-0;
+    }
+
+    .menu-group + .menu-group {
+      @apply mt-6;
+    }
+
+    .menu-title {
+      @apply mt-0 mb-3 px-3 text-[10px] font-semibold tracking-[0.24em] uppercase text-white/22;
+    }
+  }
+}

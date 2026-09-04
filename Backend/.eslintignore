@@ -1,0 +1,15 @@
+# dependências
+node_modules/
+.yarn/
+
+# produção / build
+dist/
+build/
+public/
+
+# IDE / configs
+.vscode/
+.eslintrc.js
+
+# testes e coverage
+coverage/

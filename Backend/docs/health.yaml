@@ -1,0 +1,26 @@
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check detalhado do servidor
+      responses:
+        '200':
+          description: Servidor saudavel
+        '503':
+          description: Dependencia indisponivel
+
+  /healthz:
+    get:
+      tags: [Health]
+      summary: Health check simples para probes
+      responses:
+        '200':
+          description: OK
+
+  /metrics:
+    get:
+      tags: [Health]
+      summary: Metricas Prometheus protegidas por auth admin
+      responses:
+        '200':
+          description: Metricas retornadas

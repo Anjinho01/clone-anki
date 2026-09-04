@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Flashcards API
+  description: |
+    API REST para o sistema Flashcards com agrupamento de decks por packages e repetição espaçada com FSRS.
+    Suporta sincronização offline/online para apps mobile.
+    Hierarquia de roles autenticadas: develop > admin > monitor > user.
+  version: 1.0.0
+  contact:
+    name: Flashcards Dev
+
+servers:
+  - url: http://localhost:3007
+    description: Desenvolvimento local
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+            statusCode:
+              type: integer
+
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Auth
+    description: Autenticação e gerenciamento de sessão
+  - name: Decks
+    description: Decks publicos e privados com regra de ownership no backend
+  - name: Packages
+    description: Agrupadores publicos de decks com criacao por monitor/admin/develop
+  - name: Library Cards
+    description: Cards reutilizaveis publicos e privados com controle por role e ownership
+  - name: Cards
+    description: Instancias de cards do usuario dentro de um deck
+  - name: Reviews
+    description: Sessões de estudo e reviews FSRS
+  - name: Sync
+    description: Sincronização offline/online
+  - name: Logs
+    description: Logs de atividade e acesso
+  - name: Users
+    description: Perfil e administracao de usuarios
+  - name: Roles
+    description: Consulta de roles do sistema
+  - name: Notifications
+    description: Notificacoes do usuario autenticado
+  - name: Health
+    description: Status do servidor

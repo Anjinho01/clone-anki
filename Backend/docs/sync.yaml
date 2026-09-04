@@ -1,0 +1,103 @@
+paths:
+  /sync:
+    post:
+      tags: [Sync]
+      summary: Sincronizar dados offline/online
+      description: |
+        Endpoint principal de sincronização (protocolo AnkiWeb-like).
+
+        **Fluxo:**
+        1. Client envia `lastSyncAt` + array de `changes` (mudanças feitas offline)
+        2. Server aplica as mudanças do client (com detecção de conflito last-write-wins)
+        3. Server retorna as mudanças do servidor desde `lastSyncAt` que o client precisa aplicar
+
+        **Primeiro sync:** enviar `lastSyncAt: null` para receber todos os dados do servidor.
+
+        **Conflito:** Se o servidor tem uma versão mais recente (comparando `updatedAt`),
+        o servidor vence e a mudança do client é marcada como `conflict`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [changes]
+              properties:
+                lastSyncAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Timestamp do último sync. Null para primeiro sync.
+                changes:
+                  type: array
+                  items:
+                    type: object
+                    required: [entity, action, data, updatedAt]
+                    properties:
+                      entity:
+                        type: string
+                        enum: [deck, card, reviewLog]
+                      action:
+                        type: string
+                        enum: [create, update, delete]
+                      id:
+                        type: integer
+                        description: ID do servidor (para update/delete)
+                      clientId:
+                        type: string
+                        description: UUID gerado no client (para create)
+                      data:
+                        type: object
+                        description: Dados da entidade
+                        properties:
+                          packageId:
+                            type: integer
+                            nullable: true
+                          flashcardId:
+                            type: integer
+                            description: Alias legado aceito apenas para compatibilidade em cards de deck
+                      updatedAt:
+                        type: string
+                        format: date-time
+      responses:
+        '200':
+          description: Sync concluído
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      applied:
+                        type: array
+                        description: Resultado de cada change do client
+                        items:
+                          type: object
+                          properties:
+                            clientId:
+                              type: string
+                            entity:
+                              type: string
+                            action:
+                              type: string
+                            serverId:
+                              type: integer
+                            status:
+                              type: string
+                              enum: [applied, conflict, skipped]
+                      serverChanges:
+                        type: array
+                        description: Mudanças do servidor para o client aplicar
+                        items:
+                          type: object
+                      newSyncAt:
+                        type: string
+                        format: date-time
+                      conflicts:
+                        type: array
+                        items:
+                          type: object

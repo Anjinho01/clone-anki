@@ -1,0 +1,83 @@
+paths:
+  /logs/activity:
+    get:
+      tags: [Logs]
+      summary: Listar logs de atividade
+      parameters:
+        - in: query
+          name: tableName
+          schema:
+            type: string
+        - in: query
+          name: recordId
+          schema:
+            type: integer
+        - in: query
+          name: userId
+          schema:
+            type: integer
+        - in: query
+          name: action
+          schema:
+            type: string
+            enum: [CREATE, UPDATE, DELETE]
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Logs de atividade retornados
+
+  /logs/access:
+    get:
+      tags: [Logs]
+      summary: Listar logs de acesso
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: integer
+        - in: query
+          name: email
+          schema:
+            type: string
+        - in: query
+          name: success
+          schema:
+            type: boolean
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Logs de acesso retornados
