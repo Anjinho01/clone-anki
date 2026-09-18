@@ -289,6 +289,58 @@ export default function DeckStudyApp() {
                   </p>
                 </div>
 
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200">
+                      <PiCardsDuotone className="text-xl" />
+                    </div>
+                    <div>
+                      <Tooltip
+                        title="Posicao do card atual dentro da sessao carregada."
+                        wrapperClass="inline-flex"
+                      >
+                        <p className="cursor-help text-sm font-semibold text-slate-900 dark:text-white">
+                          Card {currentCardNumber}
+                        </p>
+                      </Tooltip>
+                      <Tooltip
+                        title="Tipo do card exibido agora. Basico mostra frente e resposta; outros tipos mudam a forma de estudo."
+                        wrapperClass="inline-flex"
+                      >
+                        <p className="cursor-help text-sm text-slate-500 dark:text-slate-400">
+                          {currentCardTypeLabel}
+                        </p>
+                      </Tooltip>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 xl:ml-auto">
+                    <Tooltip
+                      title="Total de cards incluidos nesta sessao: os que ainda faltam mais os que ja foram respondidos."
+                      wrapperClass="inline-flex"
+                    >
+                      <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                        {totalLoaded} na sessão
+                      </span>
+                    </Tooltip>
+                    <Tooltip
+                      title="Quantidade de cards que voce ja avaliou nesta sessao atual."
+                      wrapperClass="inline-flex"
+                    >
+                      <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                        {reviewedCount} respondidos
+                      </span>
+                    </Tooltip>
+                    <Tooltip
+                      title="Fase FSRS do card atual. Novo ainda nao foi estudado; aprendendo e revisao ja tem historico; reaprendendo voltou apos erro."
+                      wrapperClass="inline-flex"
+                    >
+                      <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                        Fase atual: {currentCardStateLabel}
+                      </span>
+                    </Tooltip>
+                  </div>
+                </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <Tooltip
                     title="Cards que ja passaram da fase inicial e entraram na fila de repeticao desta sessao."
@@ -306,59 +358,6 @@ export default function DeckStudyApp() {
                   >
                     <span className="inline-flex cursor-help items-center rounded-2xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-200">
                       {newCards} novos
-                    </span>
-                  </Tooltip>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200">
-                    <PiCardsDuotone className="text-xl" />
-                  </div>
-                  <div>
-                    <Tooltip
-                      title="Posicao do card atual dentro da sessao carregada."
-                      wrapperClass="inline-flex"
-                    >
-                      <p className="cursor-help text-sm font-semibold text-slate-900 dark:text-white">
-                        Card {currentCardNumber}
-                      </p>
-                    </Tooltip>
-                    <Tooltip
-                      title="Tipo do card exibido agora. Basico mostra frente e resposta; outros tipos mudam a forma de estudo."
-                      wrapperClass="inline-flex"
-                    >
-                      <p className="cursor-help text-sm text-slate-500 dark:text-slate-400">
-                        {currentCardTypeLabel}
-                      </p>
-                    </Tooltip>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2 xl:ml-auto">
-                  <Tooltip
-                    title="Total de cards incluidos nesta sessao: os que ainda faltam mais os que ja foram respondidos."
-                    wrapperClass="inline-flex"
-                  >
-                    <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
-                      {totalLoaded} na sessão
-                    </span>
-                  </Tooltip>
-                  <Tooltip
-                    title="Quantidade de cards que voce ja avaliou nesta sessao atual."
-                    wrapperClass="inline-flex"
-                  >
-                    <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
-                      {reviewedCount} respondidos
-                    </span>
-                  </Tooltip>
-                  <Tooltip
-                    title="Fase FSRS do card atual. Novo ainda nao foi estudado; aprendendo e revisao ja tem historico; reaprendendo voltou apos erro."
-                    wrapperClass="inline-flex"
-                  >
-                    <span className="cursor-help rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-300">
-                      Fase atual: {currentCardStateLabel}
                     </span>
                   </Tooltip>
                 </div>
@@ -390,7 +389,7 @@ export default function DeckStudyApp() {
                     <button
                       type="button"
                       onClick={() => setAnswerVisible(true)}
-                      className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 dark:bg-emerald-500 dark:hover:bg-emerald-400"
+                      className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                     >
                       <PiEyeDuotone />
                       Mostrar resposta
@@ -403,53 +402,35 @@ export default function DeckStudyApp() {
                     {currentCard.back || 'Sem resposta cadastrada.'}
                   </p>
                 ) : (
-                  <p className="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">
+                  <p className="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
                     Revele a resposta e só então avalie se lembrou com facilidade, dificuldade ou se
                     precisa rever imediatamente.
                   </p>
                 )}
               </div>
+              <Tooltip
+                title="Escolha a nota que melhor representa a lembrança deste card."
+                wrapperClass="flex-row"
+              >
+                <div className="grid w-full gap-3 sm:grid-cols-4 xl:grid-cols-4">
+                  {RATING_BUTTONS.map((button) => (
+                    <button
+                      key={button.rating}
+                      type="button"
+                      disabled={!answerVisible || submitStatus === 'loading'}
+                      onClick={() => handleReview(button.rating)}
+                      className={`flex min-h-[96px] w-full flex-col items-start justify-center rounded-[22px] border px-4 py-2 text-left transition-all disabled:cursor-not-allowed disabled:opacity-50 ${button.className}`}
+                    >
+                      <div>
+                        <div className="text-sm font-semibold">{button.title}</div>
+                        <div className="mt-1 text-xs opacity-80">{button.subtitle}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </Tooltip>
             </div>
           </article>
-
-          <aside className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm md:rounded-[32px] md:p-6 dark:border-slate-800 dark:bg-slate-900">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200">
-                <PiLightningDuotone className="text-xl" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                  Avaliação do review
-                </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Escolha a nota que melhor representa a lembrança deste card.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {RATING_BUTTONS.map((button) => (
-                <button
-                  key={button.rating}
-                  type="button"
-                  disabled={!answerVisible || submitStatus === 'loading'}
-                  onClick={() => handleReview(button.rating)}
-                  className={`flex min-h-[96px] w-full flex-col items-start justify-center rounded-[22px] border px-4 py-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-50 ${button.className}`}
-                >
-                  <div>
-                    <div className="text-sm font-semibold">{button.title}</div>
-                    <div className="mt-1 text-xs opacity-80">{button.subtitle}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-5 rounded-[22px] bg-slate-50 p-4 text-sm leading-7 text-slate-500 dark:bg-slate-950/20 dark:text-slate-400">
-              {answerVisible
-                ? 'Depois de avaliar, o próximo card da sessão assume a tela automaticamente.'
-                : 'As notas ficam habilitadas depois que a resposta é revelada, para evitar reviews acidentais.'}
-            </div>
-          </aside>
         </section>
       )}
     </div>
