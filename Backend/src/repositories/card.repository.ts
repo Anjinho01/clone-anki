@@ -31,11 +31,13 @@ const CARD_SELECT = `
   COALESCE(progress.is_deleted, FALSE) AS is_deleted,
   COALESCE(progress.created_at, deck_card.created_at) AS created_at,
   COALESCE(progress.updated_at, deck_card.updated_at) AS updated_at,
-  card.front        AS f_front,
-  card.back         AS f_back,
-  card.card_type    AS f_card_type,
-  card.mcq_options  AS f_mcq_options,
-  card.mcq_correct  AS f_mcq_correct
+  card.front         AS f_front,
+  card.back          AS f_back,
+  card.front_img_url AS f_front_img_url,
+  card.back_img_url  AS f_back_img_url,
+  card.card_type     AS f_card_type,
+  card.mcq_options   AS f_mcq_options,
+  card.mcq_correct   AS f_mcq_correct
 `;
 
 const cardRepository = {

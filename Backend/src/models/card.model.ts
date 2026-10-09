@@ -50,11 +50,13 @@ export interface CardRow extends RowDataPacket {
   updated_at:     Date;
 
   // Campos do card reutilizável (JOIN — prefixo f_ preservado por compatibilidade)
-  f_front:        string;
-  f_back:         string;
-  f_card_type:    'basic' | 'reverse' | 'cloze' | 'mcq';
-  f_mcq_options:  string | null;  // JSON serializado
-  f_mcq_correct:  number | null;
+  f_front:         string;
+  f_back:          string;
+  f_front_img_url: string;
+  f_back_img_url:  string;
+  f_card_type:     'basic' | 'reverse' | 'cloze' | 'mcq';
+  f_mcq_options:   string | null;  // JSON serializado
+  f_mcq_correct:   number | null;
 }
 
 // ─── Domain type ──────────────────────────────────────────────────────────────

@@ -115,6 +115,8 @@ function createCardRow(overrides: Record<string, unknown> = {}): CardRow {
     updated_at: new Date('2024-01-03T00:00:00Z'),
     f_front: 'Frente',
     f_back: 'Verso',
+    f_front_img_url: null,
+    f_back_img_url: null,
     f_card_type: 'basic',
     f_mcq_options: null,
     f_mcq_correct: null,
