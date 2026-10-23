@@ -371,6 +371,9 @@ export default function DeckStudyApp() {
                 </p>
                 <p className="mt-3 text-sm leading-7 whitespace-pre-wrap text-slate-900 dark:text-white">
                   {currentCard.front || 'Sem conteúdo na frente.'}
+                  {currentCard.front_img_url && (
+                    <img src={currentCard.front_img_url} alt="Imagem da frente" />
+                  )}
                 </p>
               </div>
 
@@ -400,6 +403,9 @@ export default function DeckStudyApp() {
                 {answerVisible ? (
                   <p className="mt-3 text-sm leading-7 whitespace-pre-wrap text-slate-700 dark:text-slate-200">
                     {currentCard.back || 'Sem resposta cadastrada.'}
+                    {currentCard.back_img_url && (
+                      <img src={currentCard.back_img_url} alt="Imagem de trás" />
+                    )}
                   </p>
                 ) : (
                   <p className="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
