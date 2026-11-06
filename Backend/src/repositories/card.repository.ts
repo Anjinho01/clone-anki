@@ -71,6 +71,9 @@ const cardRepository = {
        ORDER BY deck_card.position ASC, deck_card.created_at ASC, deck_card.id ASC`,
       [userId, deckId]
     );
+    console.log("findByDeck - primeira linha:", rows[0]);
+    console.log("findByDeck - imagem:", rows[0]?.f_front_img_url);
+
     return rows;
   },
 

@@ -27,6 +27,7 @@ import {
   selectStudySubmitStatus,
   submitStudyReview,
 } from './store/studySlice';
+import { createPortal } from 'react-dom';
 
 const RATING_BUTTONS: Array<{
   rating: 1 | 2 | 3 | 4;
@@ -132,6 +133,9 @@ export default function DeckStudyApp() {
   }, [deck?.id, dispatch]);
 
   const currentCard = studyCards[0] ?? null;
+  if (currentCard) {
+    console.log('Full card object:', currentCard);
+  }
 
   useEffect(() => {
     setAnswerVisible(false);
@@ -150,6 +154,8 @@ export default function DeckStudyApp() {
   const currentCardStateLabel = currentCard ? getCardStateLabel(currentCard.state) : null;
 
   const isLoading = deckStatus === 'loading' || (deck?.id != null && studyStatus === 'loading');
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isBackImageModalOpen, setIsBackImageModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -230,7 +236,6 @@ export default function DeckStudyApp() {
           </button>
         </section>
       )}
-
       {studyStatus === 'succeeded' && !currentCard && (
         <section className="rounded-[24px] border border-slate-200 bg-white px-5 py-12 text-center shadow-sm md:rounded-[32px] md:px-6 md:py-16 dark:border-slate-800 dark:bg-slate-900">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
@@ -263,7 +268,6 @@ export default function DeckStudyApp() {
           </div>
         </section>
       )}
-
       {currentCard && (
         <section className="flex flex-col gap-5">
           <div className="flex items-center">
@@ -369,12 +373,47 @@ export default function DeckStudyApp() {
                 <p className="text-[11px] font-semibold tracking-[0.24em] text-slate-400 uppercase">
                   Frente
                 </p>
-                <p className="mt-3 text-sm leading-7 whitespace-pre-wrap text-slate-900 dark:text-white">
-                  {currentCard.front || 'Sem conteúdo na frente.'}
+                <div className="mt-3 flex items-start gap-4 text-sm leading-7 text-slate-900 dark:text-white">
+                  <div className="flex-1 whitespace-pre-wrap">
+                    {currentCard.front || 'Sem conteúdo na frente.'}
+                  </div>
                   {currentCard.front_img_url && (
-                    <img src={currentCard.front_img_url} alt="Imagem da frente" />
+                    <>
+                      <img
+                        src={currentCard.front_img_url}
+                        alt="Imagem da frente"
+                        onClick={() => setIsImageModalOpen(true)}
+                        className="h-36 w-36 flex-shrink-0 cursor-pointer rounded-md border border-slate-200 object-cover shadow-sm transition hover:scale-[1.02] hover:opacity-90 dark:border-slate-700"
+                      />
+
+                      {/* Fullscreen Modal Overlay */}
+                      {isImageModalOpen && (
+                        <div
+                          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+                          onClick={() => setIsImageModalOpen(false)}
+                        >
+                          <div
+                            className="relative max-h-[90vh] max-w-4xl"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <img
+                              src={currentCard.front_img_url}
+                              alt="Imagem ampliada da frente"
+                              className="max-h-[85vh] max-w-full rounded-lg bg-black/20 object-contain shadow-2xl"
+                            />
+                            <button
+                              onClick={() => setIsImageModalOpen(false)}
+                              className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-white shadow-md hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
+                              title="Fechar"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
-                </p>
+                </div>
               </div>
 
               <div
@@ -401,12 +440,21 @@ export default function DeckStudyApp() {
                 </div>
 
                 {answerVisible ? (
-                  <p className="mt-3 text-sm leading-7 whitespace-pre-wrap text-slate-700 dark:text-slate-200">
-                    {currentCard.back || 'Sem resposta cadastrada.'}
+                  <div className="mt-3 flex items-start gap-4 text-sm leading-7 text-slate-900 dark:text-white">
+                    <div className="flex-1 whitespace-pre-wrap">
+                      {currentCard.back || 'Sem resposta cadastrada.'}
+                    </div>
                     {currentCard.back_img_url && (
-                      <img src={currentCard.back_img_url} alt="Imagem de trás" />
+                      <>
+                        <img
+                          src={currentCard.back_img_url}
+                          alt="Imagem de trás"
+                          onClick={() => setIsBackImageModalOpen(true)}
+                          className="h-36 w-36 flex-shrink-0 cursor-pointer rounded-md border border-slate-200 object-cover shadow-sm transition hover:scale-[1.02] hover:opacity-90 dark:border-slate-700"
+                        />
+                      </>
                     )}
-                  </p>
+                  </div>
                 ) : (
                   <p className="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
                     Revele a resposta e só então avalie se lembrou com facilidade, dificuldade ou se
@@ -439,6 +487,54 @@ export default function DeckStudyApp() {
           </article>
         </section>
       )}
+      createPortal(
+      {/* Front Image Modal */}
+      {isImageModalOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+            onClick={() => setIsImageModalOpen(false)}
+          >
+            <div className="relative max-h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={currentCard.front_img_url}
+                alt="Zoom frente"
+                className="max-h-[85vh] max-w-full rounded-lg bg-black/20 object-contain shadow-2xl"
+              />
+              <button
+                onClick={() => setIsImageModalOpen(false)}
+                className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-white shadow-md hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
+              >
+                ✕
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+      {/* Back Image Modal */}
+      {isBackImageModalOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+            onClick={() => setIsBackImageModalOpen(false)}
+          >
+            <div className="relative max-h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={currentCard.back_img_url}
+                alt="Zoom trás"
+                className="max-h-[85vh] max-w-full rounded-lg bg-black/20 object-contain shadow-2xl"
+              />
+              <button
+                onClick={() => setIsBackImageModalOpen(false)}
+                className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-white shadow-md hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
+              >
+                ✕
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+      , document.body);
     </div>
   );
 }

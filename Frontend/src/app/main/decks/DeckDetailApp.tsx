@@ -179,7 +179,23 @@ function CardRow({ card }: { card: CardType }) {
             Frente
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-900 md:leading-7 dark:text-white">
-            {card.front}
+            <span className="flex-1">{card.front}</span>
+            {card.front_img_url && (
+              <svg
+                className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-slate-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                title="Este card possui uma imagem"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            )}
           </p>
         </div>
         <div className="border-t border-dashed border-slate-200 pt-4 dark:border-slate-700">
@@ -187,7 +203,23 @@ function CardRow({ card }: { card: CardType }) {
             Verso
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-500 md:leading-7 dark:text-slate-400">
-            {card.back}
+            <span className="flex-1">{card.back}</span>
+            {card.back_img_url && (
+              <svg
+                className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-slate-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                title="Este card possui uma imagem"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            )}
           </p>
         </div>
       </div>
