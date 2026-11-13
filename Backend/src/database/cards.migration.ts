@@ -37,6 +37,8 @@ export async function runCardsMigration(): Promise<void> {
       created_by      INT NOT NULL,
       front           TEXT NOT NULL,
       back            TEXT NOT NULL,
+      front_img_url   TEXT NOT NULL,
+      back_img_url    TEXT NOT NULL,
       card_type       ENUM('basic','reverse','cloze','mcq') NOT NULL DEFAULT 'basic',
       mcq_options     JSON DEFAULT NULL,
       mcq_correct     INT DEFAULT NULL,

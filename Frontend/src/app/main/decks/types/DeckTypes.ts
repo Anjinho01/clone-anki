@@ -47,6 +47,8 @@ export interface CardType {
   // Content from JOIN with tb_flashcards
   front: string;
   back: string;
+  front_img_url?: string | null;
+  back_img_url?: string | null; 
   cardType: 'basic' | 'reversed' | 'cloze' | 'mcq';
   mcqOptions?: string[] | null;
   mcqCorrect?: string | null;

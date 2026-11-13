@@ -36,6 +36,8 @@ const SYNC_CARD_SELECT = `
   ) AS updated_at,
   card.front AS f_front,
   card.back AS f_back,
+  card.front_img_url AS f_front_img_url,
+  card.back_img_url AS f_back_img_url,
   card.card_type AS f_card_type,
   card.mcq_options AS f_mcq_options,
   card.mcq_correct AS f_mcq_correct
@@ -118,6 +120,7 @@ const syncRepository = {
          AND card.is_deleted = FALSE`,
       [userId, userId]
     );
+
     return rows;
   },
 
